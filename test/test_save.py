@@ -13,3 +13,11 @@ class TestSave (TestCase):
       underpot.save(path, plain)
       loaded = underpot.load(path)
       self.assertEqual(loaded, plain)
+  
+  def test_save_to_hashed_path (self):
+    with TemporaryDirectory() as tempdir:
+      path = Path(tempdir).joinpath("my-secret")
+      plain = b"my secret!"
+      underpot.save(path, plain, use_hashed_path=True)
+      loaded = underpot.load(path, use_hashed_path=True)
+      self.assertEqual(loaded, plain)
