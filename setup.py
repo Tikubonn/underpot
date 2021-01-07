@@ -6,7 +6,7 @@ with open("README.md", "r", encoding="utf-8") as readme:
 
 setup(
   name="underpot",
-  version="1.0.0",
+  version="2.0.0",
   description="this package provide utility for saving data with encryption.",
   long_description=long_description,
   long_description_content_type="text/markdown",

@@ -1,24 +1,27 @@
 
 # UnderPot 
 
-![](https://img.shields.io/badge/Python-3.6-blue)
-![](https://img.shields.io/badge/License-MIT-green)
+![](https://img.shields.io/badge/python-v3.6-blue)
+![](https://img.shields.io/badge/license-MIT-green)
 
-\| 日本語 \| [English](README.md) \|
+\| [English](README.md) \| Japanese \|
 
-UnderPot は鍵を用意せずに共通鍵暗号方式で暗号化を行う機能を提供するライブラリです。
-このライブラリは暗号化の際に秘密鍵をマシンの識別子とユーザ名から自動生成し、その鍵を使用して暗号化を行います。
-なので、鍵をソースコードに直書きしたり、配布するファイルに同封したりするよりかは安全に情報を保存することができます。
-もしもデータだけ盗まれたとしても、ユーザ名とマシンの識別子がわからなければ解読しづらいだろうという算段です。
+UnderPot はちいさな暗号化ライブラリです。
+このライブラリは暗号化のための幾つかの関数を提供します。
+これらの関数はデータ暗号化時に、「コンピュータの識別子」「ユーザ名」「保存先ファイル名」等の情報から秘密鍵を動的に生成し使用します。
+そのため、これらの関数はデータ暗号化時に秘密鍵を要求しません。
+このライブラリを使用することで、パスワードなどの機密情報を保存するソフトウェアで、
+秘密鍵を別途ファイルやソースコード内に保持するよりも、安全に暗号化を行うことができるでしょう。
 
-ただ、これを書いている人はセキュリティの専門家でもないただの素人なので、
-高いセキュリティが求められるような製作物に使用するのはお勧めしません。
-もっと良いライブラリをご存知ならば、そちらを使うことを推奨します。
+ただし注意してください。
+このライブラリの作者はセキュリティの専門家ではありません。
+そのため、類似する高品質なライブラリがあるならば、そちらの利用を検討したほうが良いでしょう。
 
 ## Usage
 
-単純にデータを暗号化・復号したい場合には `underpot` パッケージが提供している
-`encrypt` 関数と `decrypt` 関数を利用することで、データの暗号化・復号を行うことができます。
+導入後、暗号化のための幾つかの関数が提供されます。
+任意のバイト列を暗号化するには `encrypt` 関数を使用します。
+暗号化されたバイト列を復号するには `decrypt` 関数を使用します。
 
 ```py
 import underpot 
@@ -27,39 +30,30 @@ encrypted = underpot.encrypt(b"your secret!")
 underpot.decrypt(encrypted) # b"your secret!"
 ```
 
-暗号化したデータをファイルに書き出したい・読みだしたい場合には同パッケージにて提供されている `save` 関数と `load` 関数が利用できます。
-この関数でデータを保存する場合、この関数は「ユーザ名・マシンの識別子」に加えて「保存先のファイルの絶対パス」も鍵生成に利用されます。
-それ以外ではファイルを開き `encrypt` 関数で暗号化したデータを書き込む、または開いたファイルから読み込んだデータを `decrypt` 関数で復号することと変わりありません。
+もし、任意のデータを暗号化して保存したい場合には `save` 関数と `load` 関数が利用できます。
 
 ```py
 import underpot 
 
-underpot.save("cachedir/password-cache.cache", b"my password!")
-underpot.load("cachedir/password-cache.cache") # b"my password!"
+underpot.save("secrets/password", b"my password!")
+underpot.load("secrets/password") # b"my password!"
 ```
 
-`save` 関数 `load` 関数はともにファイルの種類の判別を困難にするために保存先・読み込み元のファイル名をハッシュ化してくれる機能があります。
-この機能は FTP のホスト名とそれに関するパスワードなどといった複数の秘密情報を管理する際に有効です。
-この機能を有効にするにはオプショナル引数の `use_hashed_path` に `True` を与えてください。
+UnderPot はファイル名から内容を推察されることを防ぐため、ファイル名を難読化する機能も用意されています。
+ファイル名を難読化したい場合には `get_hashed_path` 関数が利用できます。
 
 ```py
-underpot.save("cachedir/password-cache.cache", b"my password!", use_hashed_path=True)
-underpot.load("cachedir/password-cache.cache", use_hashed_path=True) # b"my password!"
-```
+import underpot 
 
-## Installation
-
-UnderPot は [setup.py](setup.py) が同梱されているため下記のコマンドからインストールすることができます。
-
-```shell
-$ python setup.py install
+underpot.get_hashed_path("secrets/password") # secrets/KsvJ-9_MErflf_-K0eU4qaW8QVZJBArxR6KIMfjyDZA=
 ```
 
 ## Requirement
 
 * [pycryptodomex](https://www.pycryptodome.org)
 
-## Installation
+## License 
 
-* UnderPot は [MIT License](LICENSE.txt) の許諾の下で公開されています。
-* UnderPot は [pyencryptdomex](https://www.pycryptodome.org) を利用しています。[pycryptodomex](https://www.pycryptodome.org) は [BSD, Public Domain and Apache Licenses](license/pycryptodomex/LICENSE.rst) の許諾の下で公開されています。詳細は [license/pycryptodomex/LICENSE.rst](license/pycryptodomex/LICENSE.rst) を参照ください。
+UnderPot は [MIT License](LICENSE.txt) で公開されています。
+
+* [pycryptodomex](https://www.pycryptodome.org) は [BSD, Public Domain and Apache Licenses](license/pycryptodomex/LICENSE.rst) で公開されています。
